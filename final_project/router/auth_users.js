@@ -22,9 +22,9 @@ regd_users.post("/login", (req, res) => {
   if (!authenticatedUser(username, password)) {
     return res.status(401).json({ message: "Invalid credentials" });
   }
-  const token = jwt.sign({ username }, "fingerprint_customer", { expiresIn: "1h" });
-  req.session.authorization = { accessToken: token, username };
-  return res.status(200).json({ message: "User successfully logged in", token });
+  const accessToken = jwt.sign({ username }, "access", { expiresIn: "1h" });
+  req.session.authorization = { accessToken, username };
+  return res.status(200).json({ message: "Customer successfully logged in", accessToken });
 });
 
 // Add or update a review
@@ -32,7 +32,6 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;
   const { review } = req.query;
   const username = req.session.authorization?.username;
-
   if (!username) {
     return res.status(401).json({ message: "Not authenticated" });
   }
@@ -50,7 +49,6 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 regd_users.delete("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;
   const username = req.session.authorization?.username;
-
   if (!username) {
     return res.status(401).json({ message: "Not authenticated" });
   }
@@ -61,7 +59,7 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
     return res.status(404).json({ message: "Review not found" });
   }
   delete books[isbn].reviews[username];
-  return res.status(200).json({ message: `Review for ISBN ${isbn} deleted by ${username}` });
+  return res.status(200).json({ message: "Review successfully deleted" });
 });
 
 module.exports.authenticated = regd_users;
