@@ -18,7 +18,7 @@ app.use(
 app.use("/customer/auth", (req, res, next) => {
   if (req.session.authorization) {
     const token = req.session.authorization["accessToken"];
-    jwt.verify(token, "fingerprint_customer", (err, user) => {
+    jwt.verify(token, "access", (err, user) => {
       if (!err) {
         req.user = user;
         next();
